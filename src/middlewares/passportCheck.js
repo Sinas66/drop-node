@@ -9,7 +9,9 @@ const passportCheck = (req, res, next) => {
 		},
 		id => {
 			if (!id) {
-				res.status(401).json({ status: 'Unauthorized' });
+				res.status(401);
+				const error = new Error('Unauthorized');
+				next(error);
 			} else {
 				const { authorization } = req.headers;
 				User.findOne({ _id: id, token: authorization })
@@ -23,9 +25,7 @@ const passportCheck = (req, res, next) => {
 						req.user = userFromDb;
 						next();
 					})
-					.catch(err =>
-						res.status(500).json({ status: 'error', message: err.message }),
-					);
+					.catch(next);
 			}
 		},
 	)(req, res);

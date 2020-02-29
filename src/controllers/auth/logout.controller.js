@@ -1,6 +1,6 @@
 const User = require('../../models/user.model');
 
-const logOut = (req, res) => {
+const logOut = (req, res, next) => {
 	const { _id: id } = req.user;
 
 	const sendResponse = () => {
@@ -9,17 +9,12 @@ const logOut = (req, res) => {
 		});
 	};
 
-	const sendError = error => {
-		const errMessage = error.message || 'must handle error message';
-		res.json({
-			status: 'error',
-			message: errMessage,
-		});
-	};
-
 	User.findByIdAndUpdate(id, { $unset: { token: '' } })
 		.then(sendResponse)
-		.catch(sendError);
+		.catch(err => {
+			res.status(400);
+			next(err);
+		});
 };
 
 module.exports = logOut;

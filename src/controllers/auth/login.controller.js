@@ -1,6 +1,6 @@
 const passport = require('passport');
 
-const login = (req, res) => {
+const login = (req, res, next) => {
 	const sendResponse = user => {
 		res.json({
 			status: 'success',
@@ -15,10 +15,8 @@ const login = (req, res) => {
 		},
 		(err, user, info) => {
 			if (err || !user) {
-				res.status(400).json({
-					status: 'error',
-					error: info || 'Login failed',
-				});
+				res.status(400);
+				next(info);
 				return;
 			}
 			req.login(

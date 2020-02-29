@@ -93,12 +93,10 @@ UserSchema.pre('findOneAndUpdate', function(next) {
 });
 
 UserSchema.methods.comparePassword = async function(password) {
-	bcrypt
+	return await bcrypt
 		.compare(password, this.password)
-		.then(
-			result =>
-				new Promise((resolve, reject) => (result ? resolve() : reject())),
-		)
+		.then(result => result)
+		// eslint-disable-next-line no-console
 		.catch(err => console.log('comparePassword err', err));
 };
 

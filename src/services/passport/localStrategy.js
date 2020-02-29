@@ -17,12 +17,16 @@ module.exports = new Strategy(
 
 				user
 					.comparePassword(password)
-					.then(async () => {
-						user.getJWT();
-						const userData = user.getPublicFields();
-						return cb(null, userData, {
-							message: 'Logged In Successfully',
-						});
+					.then(result => {
+						if (result) {
+							user.getJWT();
+							const userData = user.getPublicFields();
+							return cb(null, userData);
+						} else {
+							return cb(null, false, {
+								message: 'Incorrect email or password.',
+							});
+						}
 					})
 					.catch(() =>
 						cb(null, false, {
